@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import {
-  FlaskConical,
   LogOut,
   Globe,
   User,
@@ -40,19 +39,19 @@ export const AdminNavbar: React.FC = () => {
   return (
     <header className="admin-navbar-light">
       <div className="admin-navbar-brand">
-        {companySettings.logoUrl ? (
-          <div style={{ display: 'flex', alignItems: 'center', marginRight: '0.75rem' }}>
-            <img
-              src={companySettings.logoUrl}
-              alt={companySettings.companyName}
-              style={{ maxHeight: '34px', width: 'auto', objectFit: 'contain' }}
-            />
-          </div>
-        ) : (
-          <div className="admin-brand-icon-wrap">
-            <FlaskConical size={20} color="#4A90E2" />
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', marginRight: '0.75rem' }}>
+          <img
+            src={companySettings.logoUrl || '/logo.png'}
+            alt={companySettings.companyName || 'Raghav Texchems Chemical Pvt. Ltd.'}
+            style={{ maxHeight: '34px', width: 'auto', objectFit: 'contain' }}
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.src.endsWith('/logo.png')) {
+                target.src = '/logo.png';
+              }
+            }}
+          />
+        </div>
 
         <div>
           <div className="admin-brand-title">

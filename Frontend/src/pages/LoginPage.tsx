@@ -6,7 +6,6 @@ import {
   EyeOff,
   Lock,
   Mail,
-  FlaskConical,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -66,15 +65,12 @@ export const LoginPage: React.FC = () => {
       <div className="login-minimal-card">
         {/* Company Brand Header */}
         <div className="login-brand-section">
-          <div className="login-logo-container">
-            <div className="login-brand-icon">
-              <FlaskConical size={28} color="#4A90E2" />
-            </div>
-            <div className="login-brand-titles">
-              <h2 className="login-company-name">Raghav Texchems</h2>
-              <span className="login-company-type">Chemical Private Limited</span>
-              <span className="login-company-tagline">chemistry that connects</span>
-            </div>
+          <div className="login-logo-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}>
+            <img
+              src="/logo.png"
+              alt="Raghav Texchems Chemical Pvt. Ltd."
+              style={{ maxHeight: '50px', width: 'auto', objectFit: 'contain' }}
+            />
           </div>
         </div>
 

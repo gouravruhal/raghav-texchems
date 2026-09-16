@@ -178,9 +178,6 @@ const AdminPortal: React.FC = () => {
   );
 };
 
-import { TickerBar } from './components/common/TickerBar';
-import { QualityPage } from './pages/QualityPage';
-
 /* ================================================================
    PUBLIC WEBSITE
    ================================================================ */
@@ -188,11 +185,13 @@ import { QualityPage } from './pages/QualityPage';
 const PublicPortal: React.FC = () => {
   return (
     <div className="app-container">
-      <Navbar />
-      <TickerBar />
 
-      <main id="main-content">
+      <Navbar />
+
+      <main>
+
         <Routes>
+
           <Route
             path="/"
             element={<HomePage />}
@@ -206,11 +205,6 @@ const PublicPortal: React.FC = () => {
           <Route
             path="/about"
             element={<AboutPage />}
-          />
-
-          <Route
-            path="/quality"
-            element={<QualityPage />}
           />
 
           <Route
@@ -232,10 +226,13 @@ const PublicPortal: React.FC = () => {
               />
             }
           />
+
         </Routes>
+
       </main>
 
       <Footer />
+
     </div>
   );
 };

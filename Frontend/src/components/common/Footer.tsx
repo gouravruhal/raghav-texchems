@@ -1,159 +1,104 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FlaskConical, Lock, Phone, Mail, MapPin, ShieldCheck, ExternalLink, Clock } from 'lucide-react';
+import { Lock, Phone, Mail, MapPin } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 export const Footer: React.FC = () => {
-  const { companySettings, categories } = useData();
+  const { companySettings, products } = useData();
+
+  // Extract unique active categories for dynamic footer links
+  const activeCategories = Array.from(
+    new Set(products.filter((product) => product.active !== false).map((p) => p.category).filter(Boolean))
+  );
+  const activeContacts = companySettings.contacts.filter((contact) => contact.active && contact.name && contact.phone);
 
   return (
-    <footer className="gov-footer" role="contentinfo" aria-label="Official Corporate Footer">
-      {/* 1. TOP STRIP: Directorate Corporate Registrations */}
-      <div className="gov-footer-corporate-strip">
-        <div className="gov-footer-container">
-          <div className="corporate-credentials-row">
-            <div className="cred-badge">
-              <span className="cred-key">CIN:</span>
-              <span className="cred-val">{companySettings.cinNumber || 'U24100HR2020PTC086742'}</span>
-            </div>
-            <div className="cred-divider" aria-hidden="true">•</div>
-            <div className="cred-badge">
-              <span className="cred-key">GSTIN:</span>
-              <span className="cred-val">{companySettings.gstinNumber || '06AABCR1234F1Z5'}</span>
-            </div>
-            <div className="cred-divider" aria-hidden="true">•</div>
-            <div className="cred-badge">
-              <span className="cred-key">QUALITY ACCREDITATION:</span>
-              <span className="cred-val">ISO 9001:2015 REGISTERED QMS</span>
-            </div>
-            <div className="cred-divider" aria-hidden="true">•</div>
-            <div className="cred-badge">
-              <span className="cred-key">COMPLIANCE:</span>
-              <span className="cred-val">ZDHC ROADMAP TO ZERO & REACH COMPLIANT</span>
-            </div>
+    <footer className="footer">
+      <div className="footer-top">
+        <div className="footer-brand">
+          <div className="footer-logo-container">
+            <img
+              src={companySettings.logoUrl || '/logo.png'}
+              alt={companySettings.companyName || 'Raghav Texchems Chemical Pvt. Ltd.'}
+              className="footer-brand-img"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (!target.src.endsWith('/logo.png')) {
+                  target.src = '/logo.png';
+                }
+              }}
+            />
           </div>
+          <p className="footer-desc">
+            Manufacturer & Exporter of Dyestuff, Polymer Emulsions, Textile Auxiliaries, Paper Coating Chemicals, and Specialty Industrial Resins.
+          </p>
+          <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--color-text-on-dark-muted)', display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+            <MapPin size={16} style={{ flexShrink: 0, marginTop: '2px', color: 'var(--color-brand-primary)' }} />
+            <span>{companySettings.address}</span>
+          </div>
+        </div>
+
+        {activeCategories.length > 0 && (
+          <div>
+            <h4 className="footer-heading">Product Lines</h4>
+            <ul className="footer-links">
+              {activeCategories.map((cat) => (
+                <li key={cat}>
+                  <Link to={`/products?category=${encodeURIComponent(cat)}`} className="footer-link">
+                    {cat}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div>
+          <h4 className="footer-heading">Quick Links</h4>
+          <ul className="footer-links">
+            <li><Link to="/products" className="footer-link">All Formulations</Link></li>
+            <li><Link to="/quality" className="footer-link">Quality & Testing</Link></li>
+            <li><Link to="/about" className="footer-link">Our Story & Infrastructure</Link></li>
+            <li><Link to="/contact" className="footer-link">Contact & Inquiries</Link></li>
+            <li style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-bg-dark-border)' }}>
+              <Link
+                to="/admin"
+                className="footer-link"
+                style={{ color: 'var(--color-text-on-dark-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <Lock size={12} /> Admin Portal
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="footer-heading">Contact Team</h4>
+          <ul className="footer-links">
+            {activeContacts.map((contact) => (
+              <React.Fragment key={contact.id}>
+                <li style={{ color: 'var(--color-text-on-dark)', fontWeight: 600 }}>{contact.name}</li>
+                <li><a href={`tel:${contact.phone}`} className="footer-link" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}><Phone size={13} color="var(--color-brand-primary)" /> +91 {contact.phone}</a></li>
+              </React.Fragment>
+            ))}
+            <li style={{ color: 'var(--color-text-on-dark)', fontWeight: 600, marginTop: '0.75rem' }}>Email Inquiries</li>
+            <li>
+              <a href={`mailto:${companySettings.email}`} className="footer-link" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Mail size={13} color="var(--color-brand-primary)" /> {companySettings.email}
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
 
-      {/* 2. MAIN FOOTER CONTENT COLUMNS */}
-      <div className="gov-footer-main">
-        <div className="gov-footer-container">
-          <div className="gov-footer-grid">
-            {/* Col 1: Institutional Nomenclature & Plant */}
-            <div className="gov-col-brand">
-              <div className="footer-emblem-wrap">
-                <div className="footer-emblem-icon">
-                  <FlaskConical size={22} />
-                </div>
-                <div className="footer-emblem-text">
-                  <span className="emblem-hindi">{companySettings.hindiName || 'राघव टेक्सकेम्स केमिकल'}</span>
-                  <strong className="emblem-title">RAGHAV TEXCHEMS CHEMICAL</strong>
-                  <span className="emblem-type">Private Limited • Est. India</span>
-                </div>
-              </div>
-
-              <p className="footer-mission-snippet">
-                Industrial chemical manufacturer & exporter specializing in high-repeatability Dyestuff, Polymer Emulsions, Textile Auxiliaries, and Paper Sizing formulations under the ethos: <em>"chemistry that connects"</em>.
-              </p>
-
-              <div className="footer-plant-location">
-                <MapPin size={15} className="plant-pin-icon" />
-                <div className="plant-address-text">
-                  <strong>Registered Plant & Synthesis Complex:</strong>
-                  <span>{companySettings.plantLocation || companySettings.address}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Col 2: Chemical Divisions Directory */}
-            <div className="gov-col-links">
-              <h4 className="gov-footer-header">Chemical Divisions</h4>
-              <ul className="gov-footer-link-list">
-                {categories.map((cat) => (
-                  <li key={cat.id}>
-                    <Link to={`/products?category=${encodeURIComponent(cat.name)}`} className="gov-footer-link">
-                      <span>{cat.name}</span>
-                    </Link>
-                  </li>
-                ))}
-                <li style={{ marginTop: '0.5rem' }}>
-                  <Link to="/products" className="gov-footer-highlight-link">
-                    <span>Access All Formulations & TDS</span>
-                    <ExternalLink size={12} />
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Col 3: Institutional Navigation & Governance */}
-            <div className="gov-col-links">
-              <h4 className="gov-footer-header">Governance & Directory</h4>
-              <ul className="gov-footer-link-list">
-                <li><Link to="/" className="gov-footer-link">Home Portal</Link></li>
-                <li><Link to="/about" className="gov-footer-link">Corporate Story & Infrastructure</Link></li>
-                <li><Link to="/quality" className="gov-footer-link">Quality Standards & Lab Testing</Link></li>
-                <li><Link to="/contact" className="gov-footer-link">e-RFQ & Commercial Desk</Link></li>
-                <li style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                  <Link to="/login" className="gov-footer-link admin-entry">
-                    <Lock size={12} />
-                    <span>Directorate & Admin Portal</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Col 4: Directorate Executive Helpline */}
-            <div className="gov-col-contacts">
-              <h4 className="gov-footer-header">Directorate Contacts</h4>
-              <div className="gov-executive-contacts">
-                <div className="exec-contact-row">
-                  <span className="exec-name">{companySettings.contact1Name}</span>
-                  <span className="exec-role">{companySettings.contact1Title || 'Director / Technical Sales'}</span>
-                  <a href={`tel:+91${companySettings.contact1Phone}`} className="exec-phone-link">
-                    <Phone size={12} /> +91 {companySettings.contact1Phone}
-                  </a>
-                </div>
-
-                <div className="exec-contact-row">
-                  <span className="exec-name">{companySettings.contact2Name}</span>
-                  <span className="exec-role">{companySettings.contact2Title || 'Director / Operations & Logistics'}</span>
-                  <a href={`tel:+91${companySettings.contact2Phone}`} className="exec-phone-link">
-                    <Phone size={12} /> +91 {companySettings.contact2Phone}
-                  </a>
-                </div>
-
-                <div className="exec-contact-row">
-                  <span className="exec-role">Corporate Dispatch Email</span>
-                  <a href={`mailto:${companySettings.email}`} className="exec-email-link">
-                    <Mail size={12} /> {companySettings.email}
-                  </a>
-                </div>
-
-                <div className="exec-hours-row">
-                  <Clock size={12} />
-                  <span>{companySettings.operatingHours || 'Mon - Sat: 09:00 AM - 06:30 PM IST'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="footer-bottom">
+        <div>
+          &copy; {new Date().getFullYear()} {companySettings.companyName}. All rights reserved. | Tagline: <em>"{companySettings.tagline}"</em>
         </div>
-      </div>
-
-      {/* 3. BOTTOM STATUTORY & COPYRIGHT STRIP */}
-      <div className="gov-footer-bottom">
-        <div className="gov-footer-container">
-          <div className="gov-bottom-row">
-            <div className="bottom-copyright">
-              &copy; {new Date().getFullYear()} {companySettings.companyName}. All rights reserved. Registered under Ministry of Corporate Affairs, Government of India.
-            </div>
-
-            <div className="bottom-badges-strip">
-              <span className="stat-pill"><ShieldCheck size={12} /> ISO 9001:2015</span>
-              <span className="stat-pill">Make in India</span>
-              <span className="stat-pill">ZDHC Level 3</span>
-              <span className="stat-pill">REACH (EU)</span>
-            </div>
-          </div>
+        <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <span>ISO 9001:2015 Certified</span>
+          <span>REACH Compliant</span>
+          <span>Made in India</span>
         </div>
       </div>
     </footer>
