@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Product } from '../../types';
-import { FileText, ArrowRight } from 'lucide-react';
+import { FileText, Phone, ShieldCheck, Tag } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 interface ProductCardProps {
@@ -10,67 +10,88 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelectTechSpecs }) => {
   const { companySettings } = useData();
-  const primaryContact = companySettings.contacts.find((contact) => contact.active) || companySettings.contacts[0];
 
-  const handleWhatsAppInquiry = () => {
-    const contactName = primaryContact?.name || companySettings.contact1Name;
-    const contactPhone = primaryContact?.phone || companySettings.contact1Phone;
-    const text = `Hello ${contactName}, I am interested in technical specs & quotation for ${product.name} (${product.code}).`;
+  const handleInquiry = () => {
+    const contactName = companySettings.contact1Name;
+    const contactPhone = companySettings.contact1Phone;
+    const text = `Hello ${contactName}, Official RFQ Notice: Technical Inquiry for ${product.name} (Code: ${product.code}). Please share commercial pricing, minimum order quantity, and TDS.`;
     window.open(`https://wa.me/91${contactPhone}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   return (
-    <div className="product-card">
-      <div className="product-card-header">
-        <span className="product-category-tag">{product.category}</span>
-        <span className="product-code">{product.code}</span>
-      </div>
-
-      <div className="product-card-body">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <h3 className="product-name">{product.name}</h3>
+    <div className="gov-product-card">
+      {/* Card Header Strip */}
+      <div className="gov-product-header">
+        <div className="header-tags-group">
+          <span className="gov-cat-tag">{product.category}</span>
           {product.featured && (
-            <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', padding: '0.15rem 0.5rem', borderRadius: '4px', fontWeight: 700 }}>
-              FEATURED
+            <span className="gov-featured-tag">
+              <ShieldCheck size={11} /> PRIORITY
             </span>
           )}
         </div>
-        <p className="product-description">{product.description}</p>
-
-        <div className="product-specs-list">
-          <div className="spec-item">
-            <span className="spec-label">Appearance</span>
-            <span className="spec-value">{product.appearance}</span>
-          </div>
-          <div className="spec-item">
-            <span className="spec-label">pH Value</span>
-            <span className="spec-value">{product.ph}</span>
-          </div>
-          <div className="spec-item">
-            <span className="spec-label">Active Solids</span>
-            <span className="spec-value">{product.activeContent}</span>
-          </div>
-          <div className="spec-item">
-            <span className="spec-label">Viscosity</span>
-            <span className="spec-value">{product.viscosity}</span>
-          </div>
-        </div>
+        <span className="gov-product-code" title="Institutional Product Code">
+          <Tag size={11} /> {product.code}
+        </span>
       </div>
 
-      <div className="product-card-footer">
+      {/* Card Body */}
+      <div className="gov-product-body">
+        <h3 className="gov-product-name">{product.name}</h3>
+        <p className="gov-product-desc">{product.description}</p>
+
+        {/* Technical Data Grid */}
+        <div className="gov-specs-table">
+          <div className="gov-spec-row">
+            <span className="spec-name">Appearance</span>
+            <span className="spec-val">{product.appearance || 'Standard Liquid'}</span>
+          </div>
+          <div className="gov-spec-row">
+            <span className="spec-name">pH Buffer Range</span>
+            <span className="spec-val">{product.ph || 'Neutral'}</span>
+          </div>
+          <div className="gov-spec-row">
+            <span className="spec-name">Active Solid Content</span>
+            <span className="spec-val">{product.activeContent || 'High Solids'}</span>
+          </div>
+          <div className="gov-spec-row">
+            <span className="spec-name">Brookfield Viscosity</span>
+            <span className="spec-val">{product.viscosity || 'Standard'}</span>
+          </div>
+        </div>
+
+        {/* Applications Chips */}
+        {product.applications && product.applications.length > 0 && (
+          <div className="gov-apps-strip">
+            {product.applications.slice(0, 3).map((app, i) => (
+              <span key={i} className="app-chip">{app}</span>
+            ))}
+            {product.applications.length > 3 && (
+              <span className="app-chip more">+{product.applications.length - 3}</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Card Actions Footer */}
+      <div className="gov-product-footer">
         <button
-          className="btn btn-secondary"
-          style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+          type="button"
+          className="btn-card-tds"
           onClick={() => onSelectTechSpecs(product)}
         >
-          <FileText size={15} /> Tech Specs
+          <FileText size={14} />
+          <span>Technical Data Sheet</span>
         </button>
+
         <button
-          className="btn btn-primary"
-          style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-          onClick={handleWhatsAppInquiry}
+          type="button"
+          className="btn-card-rfq"
+          onClick={handleInquiry}
+          title="Direct Commercial Inquiry to Directorate"
         >
-          Inquire Now <ArrowRight size={15} />
+          <Phone size={13} />
+          <span>Inquire Directorate</span>
         </button>
       </div>
     </div>
